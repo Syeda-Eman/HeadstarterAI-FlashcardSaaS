@@ -1,5 +1,15 @@
+:root {
+  --background-color: #0a0f1a;
+  --primary-color: #0a1a2e;
+  --accent-color: #6a1b9a;
+  --highlight-color: #f06292;
+  --text-color: #e0e0e0;
+  --subtle-color: #4f5b66;
+  --secondary-text-color: #c0c0c0;
+}
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
+
