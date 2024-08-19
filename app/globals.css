@@ -13,3 +13,15 @@
   margin: 0;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px); /* Slight slide-in effect */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+

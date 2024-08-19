@@ -1,40 +1,106 @@
+'use client'
 import Image from "next/image";
 import getStripe from "@/utils/get_stripe";
 import { SignIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { AppBar, Container, Toolbar, Typography, Button,Link, IconButton, Grid, Avatar, Box,Paper } from "@mui/material";
+import { AppBar, Container, Toolbar, Typography, Button, Link, IconButton, Grid, Avatar, Box, Paper } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { CheckCircle as CheckCircleIcon } from '@mui/icons-material';
+import { CheckCircle as CheckCircleIcon, GitHub } from '@mui/icons-material';
 import FeatureIcon1 from '@mui/icons-material/FlashOn';
 import FeatureIcon2 from '@mui/icons-material/Storage';
 import FeatureIcon3 from '@mui/icons-material/Security';
-
+import FacebookIcon from '@mui/icons-material/Facebook'; // Import social icons
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Slider from 'react-slick';
 
 export default function Home() {
-  const testimonials = [
+  const handleSubmit = async() =>{
+    const checkoutSession = await fetch('api/checkout_session',{
+      method: 'POST',
+      headers: {
+        origin: 'http://localhost:3000',
+    },
+  })
+  const checkoutSessionJson = await checkoutSession.json()
+
+  if(checkoutSession.statusCode === 500){
+    console.error(checkoutSession.message)
+    return
+  }
+  const stripe = await getStripe();
+  const { error } = await stripe.redirectToCheckout({
+    sessionId: checkoutSessionJson.id,
+  })
+  if(error){
+    console.warn(error.message)
+    return
+  }
+}
+
+const settings = {
+  dots: true, // Show navigation dots
+  infinite: true, // Infinite loop
+  speed: 500, // Transition speed
+  slidesToShow: 3, // Show 3 testimonials at a time
+  slidesToScroll: 1, // Scroll one testimonial at a time
+  arrows: true, // Show navigation arrows
+  responsive: [
     {
-      name: 'John Doe',
-      title: 'Software Engineer',
-      image: '/path-to-image/john.jpg',
-      feedback: 'This Flashcard SaaS has drastically improved my learning experience. The interface is intuitive and the features are exactly what I needed.',
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 2, // Show 2 testimonials on medium screens
+        slidesToScroll: 1,
+        infinite: true,
+        dots: true,
+      },
     },
     {
-      name: 'Jane Smith',
-      title: 'Product Manager',
-      image: '/path-to-image/jane.jpg',
-      feedback: 'I love how easy it is to create and organize flashcards. The customer support is fantastic too!',
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 1, // Show 1 testimonial on small screens
+        slidesToScroll: 1,
+      },
     },
-    {
-      name: 'Mike Johnson',
-      title: 'UX Designer',
-      image: '/path-to-image/mike.jpg',
-      feedback: 'The design of this SaaS is top-notch. It’s fast, reliable, and the best tool I’ve used for studying.',
-    },
-  ];
+  ],
+};
+
+const teamMembers = [
+  {
+    name: 'Rimsha Ataullah',
+    position: 'AI Engineer & Data Science Enthusiast ',
+    bio: 'An AI and data science specialist with a solid computer science background, focused on delivering innovative solutions and impactful results.',
+    image: 'images/rimsha.jpg', // Replace with actual image paths
+    facebook: 'https://www.facebook.com/rimshaataullah?mibextid=ZbWKwL',
+    GitHub: 'https://github.com/Rims99',
+    linkedin: 'https://www.linkedin.com/in/rimsha-ataullah/',
+  },
+  {
+    name: 'Syeda Eman',
+    position: 'AI Enthusiast',
+    bio: 'An aspiring AI Engineer and tech enthusiast who is passionate about using AI to address real-world challenges and create meaningful solutions.',
+    image: 'images/eman.jpg',
+    facebook: 'https://www.facebook.com/profile.php?id=100095029180487',
+    GitHub: 'https://github.com/Syeda-Eman',
+    linkedin: 'https://www.linkedin.com/in/syeda-eman/',
+  },
+  {
+    name: 'Kinza Syed',
+    position: 'AI Engineer',
+    bio: 'A dedicated AI enthusiast with extensive experience in developing AI-driven solutions who focuses on creating advanced AI applications',
+    image: 'images/kinza.jpg',
+    facebook: 'https://www.facebook.com/profile.php?id=100094668984112',
+    GitHub: 'https://github.com/KinzaSyedHussain',
+    linkedin: 'https://www.linkedin.com/in/kinza-syed-1139ba262/',
+  },
+  // Add more team members as needed
+];
 
   return (
     <>
       {/* Navigation Bar (App Bar) */}
-      <AppBar position="static" sx={{ backgroundColor: 'var(--accent-color)' }}>
+      <AppBar position="static" sx={{ backgroundColor: '#000000', color: '#FFFFFF' }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
             <MenuIcon />
@@ -44,50 +110,67 @@ export default function Home() {
           </Typography>
           <Button color="inherit" href="/sign_in">Sign In</Button>
           <Button color="inherit" href="/sign_up">Sign Up</Button>
+          <Button color="inherit" href="/generate">FlashCards</Button>
           <UserButton />
         </Toolbar>
       </AppBar>
 
-      {/* Hero Section */}
-      <Box
+  <Box
+  sx={{
+    backgroundImage: 'url(images/header.png)', // Provide the correct path to the image
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    color: '#FFFFFF',
+    py: 8,
+    height: '80vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end', // Align content to the right
+    position: 'relative',
+    textAlign: 'left', // Align text to the right
+    overflow: 'hidden',
+    pr: 4, // Add some padding to the right
+  }}
+>
+  <Container maxWidth="lg">
+    <Box>
+      <Typography
+        variant="h2"
+        gutterBottom
         sx={{
-          backgroundImage: 'url(/images/header.jpeg)', // Replace with your background image path
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          color: 'var(--text-color)',
-          py: 8,
-          height: '80vh', // Adjust the height as needed
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          textAlign: 'center',
-          overflow: 'hidden',
+          animation: 'fadeIn 2s ease-in-out', // Apply fade-in animation
         }}
       >
-        <Container maxWidth="lg">
-          <Box>
-            <Typography variant="h2" gutterBottom>
-            Unlock Learning with Galaxy Flashcards
-           </Typography>
-            <Typography variant="h5" paragraph>
-            Revolutionize your study routine with our cutting-edge flashcard system. Engage, learn, and excel effortlessly
+        Galaxy Flashcards
+      </Typography>
+      <Typography
+        variant="h5"
+        paragraph
+        sx={{
+          animation: 'fadeIn 2s ease-in-out',
+          animationDelay: '0.5s', // Delayed animation for subtitle
+        }}
+      >
+        Create, Engage, learn, and excel effortlessly
+      </Typography>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: '#104EB1',
+          mt: 4,
+          animation: 'fadeIn 2s ease-in-out',
+          animationDelay: '1s', // Delayed animation for button
+        }}
+        href="/sign_up"
+      >
+        Get Started
+      </Button>
+    </Box>
+  </Container>
+</Box>
 
-           </Typography>
-            <Button
-              variant="contained"
-              sx={{ backgroundColor: 'var(--highlight-color)', mt: 4 }}
-              href="/signup"
-            >
-              Join the Waitlist
-            </Button>
-          </Box>
-        </Container>
-      </Box>
-
-      
       {/* Features Section */}
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: 8, backgroundColor: '#000000', color: '#FFFFFF' }}>
         <Container maxWidth="lg">
           {/* Feature Section Heading */}
           <Box sx={{ textAlign: 'center', mb: 6 }}>
@@ -105,15 +188,15 @@ export default function Home() {
             <Grid item xs={12} md={4}>
               <Box
                 sx={{
-                  backgroundColor: 'var(--accent-color)',
-                  color: 'var(--text-color)',
+                  backgroundColor: '#333333',
+                  color: '#FFFFFF',
                   p: 4,
                   borderRadius: 2,
                   textAlign: 'center',
                   boxShadow: 3,
                 }}
               >
-                <FeatureIcon1 sx={{ fontSize: 60, color: 'var(--highlight-color)' }} />
+                <FeatureIcon1 sx={{ fontSize: 60, color: '#104EB1' }} />
                 <Typography variant="h5" sx={{ mt: 2 }}>
                   Lightning Fast
                 </Typography>
@@ -127,15 +210,15 @@ export default function Home() {
             <Grid item xs={12} md={4}>
               <Box
                 sx={{
-                  backgroundColor: 'var(--accent-color)',
-                  color: 'var(--text-color)',
+                  backgroundColor: '#333333',
+                  color: '#FFFFFF',
                   p: 4,
                   borderRadius: 2,
                   textAlign: 'center',
                   boxShadow: 3,
                 }}
               >
-                <FeatureIcon2 sx={{ fontSize: 60, color: 'var(--highlight-color)' }} />
+                <FeatureIcon2 sx={{ fontSize: 60, color: '#104EB1' }} />
                 <Typography variant="h5" sx={{ mt: 2 }}>
                   Secure Storage
                 </Typography>
@@ -149,15 +232,15 @@ export default function Home() {
             <Grid item xs={12} md={4}>
               <Box
                 sx={{
-                  backgroundColor: 'var(--accent-color)',
-                  color: 'var(--text-color)',
+                  backgroundColor: '#333333',
+                  color: '#FFFFFF',
                   p: 4,
                   borderRadius: 2,
                   textAlign: 'center',
                   boxShadow: 3,
                 }}
               >
-                <FeatureIcon3 sx={{ fontSize: 60, color: 'var(--highlight-color)' }} />
+                <FeatureIcon3 sx={{ fontSize: 60, color: '#104EB1' }} />
                 <Typography variant="h5" sx={{ mt: 2 }}>
                   Reliable Support
                 </Typography>
@@ -169,252 +252,252 @@ export default function Home() {
           </Grid>
         </Container>
       </Box>
-      
-      {/* Testimonials Section */}
-      <Box sx={{ py: 8, backgroundColor: 'var(--secondary-text-color)', color: 'var(--primary-color)' }}>
+
+      {/* Pricing Section */}
+      <Box sx={{ py: 8, backgroundColor: '#111111', color: '#FFFFFF' }}>
         <Container maxWidth="lg">
-          {/* Testimonial Section Heading */}
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Typography variant="h3" gutterBottom>
-              What Our Users Say
+              Pricing Plans
             </Typography>
             <Typography variant="h6">
-              Hear from some of our satisfied users.
+              Choose a plan that fits your needs.
             </Typography>
           </Box>
 
-          {/* Testimonial Grid */}
+          {/* Pricing Grid */}
           <Grid container spacing={4}>
-            {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
+            {/* Basic Plan */}
+            <Grid item xs={12} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 4,
+                  borderRadius: 2,
+                  backgroundColor: '#222222',
+                  textAlign: 'center',
+                  color: '#FFFFFF',
+                }}
+              >
+                <Typography variant="h4" gutterBottom>
+                  Basic
+                </Typography>
+                <Typography variant="h5" gutterBottom>
+                  $10/month
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Perfect for individual users. Get access to all basic features.
+                </Typography>
+                <Button variant="contained"
+  sx={{
+    backgroundColor: '#104EB1', // Change the button background color here
+    color: '#ffffff',           // Change the button text color here
+    '&:hover': {
+      backgroundColor: '#104EB1', // Change the hover background color here
+    },
+  }} onClick={handleSubmit}>
+                  Subscribe
+                </Button>
+              </Paper>
+            </Grid>
+
+            {/* Standard Plan */}
+            <Grid item xs={12} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 4,
+                  borderRadius: 2,
+                  backgroundColor: '#222222',
+                  textAlign: 'center',
+                  color: '#FFFFFF',
+                }}
+              >
+                <Typography variant="h4" gutterBottom>
+                  Standard
+                </Typography>
+                <Typography variant="h5" gutterBottom>
+                  $20/month
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Ideal for small teams. Includes all Basic features plus advanced options.
+                </Typography>
+                <Button variant="contained"
+  sx={{
+    backgroundColor: '#104EB1', // Change the button background color here
+    color: '#ffffff',           // Change the button text color here
+    '&:hover': {
+      backgroundColor: '#104EB1', // Change the hover background color here
+    },
+  }} onClick={handleSubmit}>
+                  Subscribe
+                </Button>
+              </Paper>
+            </Grid>
+
+            {/* Premium Plan */}
+            <Grid item xs={12} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 4,
+                  borderRadius: 2,
+                  backgroundColor: '#222222',
+                  textAlign: 'center',
+                  color: '#FFFFFF',
+                }}
+              >
+                <Typography variant="h4" gutterBottom>
+                  Premium
+                </Typography>
+                <Typography variant="h5" gutterBottom>
+                  $30/month
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  For larger organizations. Access to all features and premium support.
+                </Typography>
+                <Button variant="contained"
+  sx={{
+    backgroundColor: '#104EB1', // Change the button background color here
+    color: '#ffffff',           // Change the button text color here
+    '&:hover': {
+      backgroundColor: '#104EB1', // Change the hover background color here
+    },
+  }} onClick={handleSubmit}>
+                  Subscribe
+                </Button>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Meet Our Team Section */}
+      <Box sx={{ py: 8, backgroundColor: '#000000', color: '#FFFFFF' }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 6 }}>
+            <Typography variant="h3" gutterBottom>
+              Meet Our Team
+            </Typography>
+            <Typography variant="h6">
+              Get to know the passionate individuals behind Galaxy Flashcards.
+            </Typography>
+          </Box>
+
+          {/* Team Grid */}
+          <Grid container spacing={4}>
+            {teamMembers.map((member) => (
+              <Grid item xs={12} md={4} key={member.name}>
                 <Box
                   sx={{
+                    backgroundColor: '#222222',
+                    color: '#FFFFFF',
                     p: 4,
-                    backgroundColor: 'var(--accent-color)',
-                    color: 'var(--text-color)',
                     borderRadius: 2,
                     textAlign: 'center',
                     boxShadow: 3,
                   }}
                 >
                   <Avatar
-                    alt={testimonial.name}
-                    src={testimonial.image}
-                    sx={{ width: 80, height: 80, margin: 'auto', mb: 2 }}
+                    src={member.image}
+                    alt={member.name}
+                    sx={{ width: 120, height: 120, mx: 'auto' }}
                   />
-                  <Typography variant="h6" gutterBottom>
-                    {testimonial.name}
+                  <Typography variant="h5" sx={{ mt: 2 }}>
+                    {member.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'var(--highlight-color)' }}>
-                    {testimonial.title}
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {member.position}
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 2 }}>
-                    {testimonial.feedback}
+                  <Typography variant="body2" sx={{ mt: 2 }}>
+                    {member.bio}
                   </Typography>
+                  <Box sx={{ mt: 2 }}>
+                    <Link href={member.facebook} target="_blank" rel="noopener">
+                      <FacebookIcon sx={{ color: '#FFFFFF', mx: 1 }} />
+                    </Link>
+                    <Link href={member.GitHub} target="_blank" rel="noopener">
+                      <GitHub sx={{ color: '#FFFFFF', mx: 1 }} />
+                    </Link>
+                    <Link href={member.linkedin} target="_blank" rel="noopener">
+                      <LinkedInIcon sx={{ color: '#FFFFFF', mx: 1 }} />
+                    </Link>
+                  </Box>
                 </Box>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
-      <Box sx={{ py: 8, backgroundColor: 'var(--accent-color)', color: 'var(--text-color)' }}>
-      <Container maxWidth="lg">
-        {/* Pricing Section Heading */}
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h3" gutterBottom>
-            Choose Your Plan
-          </Typography>
-          <Typography variant="h6">
-            Find the perfect plan for your learning needs.
-          </Typography>
-        </Box>
 
-        {/* Pricing Grid */}
-        <Grid container spacing={4}>
-          {/* Basic Plan */}
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                backgroundColor: 'white',
-                color: 'var(--primary-color)',
-                p: 4,
-                borderRadius: 2,
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Basic Plan
-              </Typography>
-              <Typography variant="h4" sx={{ mb: 2 }}>
-                $9.99 / month
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4 }}>
-                Access to basic features and a limited number of flashcards.
-              </Typography>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: 'var(--highlight-color)' }}
-                href="/signup"
-              >
-                Choose Plan
-              </Button>
-            </Box>
-          </Grid>
-
-          {/* Pro Plan */}
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                backgroundColor: 'white',
-                color: 'var(--primary-color)',
-                p: 4,
-                borderRadius: 2,
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Pro Plan
-              </Typography>
-              <Typography variant="h4" sx={{ mb: 2 }}>
-                $19.99 / month
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4 }}>
-                Includes advanced features, unlimited flashcards, and priority support.
-              </Typography>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: 'var(--highlight-color)' }}
-                href="/signup"
-              >
-                Choose Plan
-              </Button>
-            </Box>
-          </Grid>
-
-          {/* Premium Plan */}
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                backgroundColor: 'white',
-                color: 'var(--primary-color)',
-                p: 4,
-                borderRadius: 2,
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Premium Plan
-              </Typography>
-              <Typography variant="h4" sx={{ mb: 2 }}>
-                $29.99 / month
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4 }}>
-                All Pro features plus personalized coaching and additional resources.
-              </Typography>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: 'var(--highlight-color)' }}
-                href="/signup"
-              >
-                Choose Plan
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
+      {/* Testimonial Section */}
+<Box sx={{ py: 8, backgroundColor: '#111111', color: '#FFFFFF' }}>
+  <Container maxWidth="lg">
+    <Box sx={{ textAlign: 'center', mb: 6 }}>
+      <Typography variant="h3" gutterBottom>
+        What Our Users Say
+      </Typography>
+      <Typography variant="h6">
+        Hear from those who have experienced the Galaxy Flashcards difference.
+      </Typography>
     </Box>
-    <Box sx={{ py: 8, backgroundColor: 'var(--text-color)', color: 'var(--primary-color)' }}>
-      <Container maxWidth="lg">
-        {/* Section Heading */}
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h3" gutterBottom>
-            Why Choose Galaxy Flashcards?
-          </Typography>
-          <Typography variant="h6">
-            Discover the unique features and benefits that set us apart.
-          </Typography>
-        </Box>
 
-        {/* Features Grid */}
-        <Grid container spacing={4}>
-          {/* Feature 1 */}
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 4,
-                borderRadius: 2,
-                backgroundColor: 'var(--accent-color)',
-                color: 'white',
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <CheckCircleIcon sx={{ fontSize: 60, color: 'var(--highlight-color)', mb: 2 }} />
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Interactive Learning
-              </Typography>
-              <Typography variant="body1">
-                Engage with interactive flashcards that make learning more dynamic and effective.
-              </Typography>
-            </Paper>
-          </Grid>
+    {/* Testimonials Slider */}
+    <Slider {...settings}>
+      <Box 
+        sx={{
+          backgroundColor: '#222222',
+          color: '#FFFFFF',
+          p: 6,
+          borderRadius: 2,
+          textAlign: 'center',
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h6" paragraph>
+          "Galaxy Flashcards has transformed the way I study. The user interface is incredibly intuitive, and the flashcards are a game-changer."
+        </Typography>
+        <Typography variant="subtitle1">- Jane Doe</Typography>
+      </Box>
+      <Box 
+        sx={{
+          backgroundColor: '#222222',
+          color: '#FFFFFF',
+          p: 6,
+          borderRadius: 2,
+          textAlign: 'center',
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h6" paragraph>
+          "The personalized flashcards and seamless integration with my study schedule have made a huge difference in my academic performance."
+        </Typography>
+        <Typography variant="subtitle1">- John Smith</Typography>
+      </Box>
+      <Box 
+        sx={{
+          backgroundColor: '#222222',
+          color: '#FFFFFF',
+          p: 6,
+          borderRadius: 2,
+          textAlign: 'center',
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h6" paragraph>
+          "I love the variety of features and the ease of use. Galaxy Flashcards is a must-have tool for anyone serious about studying."
+        </Typography>
+        <Typography variant="subtitle1">- Emily Johnson</Typography>
+      </Box>
+    </Slider>
+  </Container>
+</Box>
 
-          {/* Feature 2 */}
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 4,
-                borderRadius: 2,
-                backgroundColor: 'var(--accent-color)',
-                color: 'white',
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <CheckCircleIcon sx={{ fontSize: 60, color: 'var(--highlight-color)', mb: 2 }} />
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Customizable Flashcards
-              </Typography>
-              <Typography variant="body1">
-                Personalize your flashcards to match your study needs and preferences.
-              </Typography>
-            </Paper>
-          </Grid>
-
-          {/* Feature 3 */}
-          <Grid item xs={12} md={4}>
-            <Paper
-              sx={{
-                p: 4,
-                borderRadius: 2,
-                backgroundColor: 'var(--accent-color)',
-                color: 'white',
-                textAlign: 'center',
-                boxShadow: 3,
-              }}
-            >
-              <CheckCircleIcon sx={{ fontSize: 60, color: 'var(--highlight-color)', mb: 2 }} />
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Progress Tracking
-              </Typography>
-              <Typography variant="body1">
-                Monitor your learning progress with detailed analytics and insights.
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
-    <Box
+      <Box
       sx={{
-        backgroundColor: 'var(--accent-color)',
-        color: 'var(--text-color)',
+        backgroundColor: '#000000',
+        color: '#FFFFFF',
         py: 2,
-        mt: 4,
-        borderTop: `1px solid var(--subtle-color)`,
         textAlign: 'center'
       }}
     >

@@ -5,7 +5,7 @@ import { SignUp } from '@clerk/nextjs';
 export default function SignUpPage() {
   return (
     <Container maxWidth="100vw">
-      <AppBar position="static" sx={{ backgroundColor: 'var(--accent-color)' }}>
+      <AppBar position="static" sx={{ backgroundColor: '#000000' }}>
       <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Galaxy Flashcards

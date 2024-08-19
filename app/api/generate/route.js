@@ -1,25 +1,43 @@
-import { NextResponse } from "next/server";
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { NextResponse } from 'next/server';
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-// Access your API key as an environment variable (see "Set up your API key" above)
+// Access your API key as an environment variable
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+// Get the generative model for flashcards
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-async function run() {
-    const prompt = ""
-    // you are a flashcard creator.Your task is a genrate consie and effective falshcard based on the the given topic or content. follow these guideline to genarte a flashcsrd
-    // 1. create a clear and concise question for the front of the flashcard.
-    // 2. provide accurate informative answer for the back of the flashcard.
-    // 3. Ensure that each flashcard focuses on a single concept pr piece of infomation
-    // 4. Ensure that the flashcard is easy to understand.
-    
-    const result = await model.generateContent(prompt);
-    // export API_KEY=<YOUR_API_KEY>
+export async function POST(req) {
+    const data = await req.json(); // Extract the text input from the request body
+    const topic = data.text; // Assuming the text is sent as { text: "your input text" }
 
-    const response = await result.response;
-    const text = response.text();
-    console.log(text);
-  }
-  
-  run();
+    // Construct the prompt for the flashcard generation
+    const prompt = `You are a flashcard creator, you take in text and create multiple flashcards from it. Those flashcards are questions which are written on front and answers of those questions on back and those questions and answers are extracted from the inpt given by the user. Make sure to create exactly 10 flashcards. Both front and back should be one sentence long. You should return in the following JSON format: {
+      "flashcards":[
+        {
+          "front": "Front of the card",
+          "back": "Back of the card"
+        }
+      ]
+    } Generate flashcards for the topic: "${topic}"`;
+
+    try {
+        // Generate content using the model
+        const result = await model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        });
+
+        // Extract the response text
+        const response = result.response;
+        const text = await response.text(); // Ensure to await the response text
+
+        // Parse the JSON response from the Gemini API
+        const flashcards = JSON.parse(text);
+
+        // Return the flashcards as a JSON response
+        return NextResponse.json(flashcards.flashcards);
+    } catch (error) {
+        console.error('Error generating flashcards:', error);
+        return NextResponse.json({ error: 'Failed to generate flashcards' }, { status: 500 });
+    }
+}
