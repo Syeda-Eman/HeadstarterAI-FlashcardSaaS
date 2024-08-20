@@ -116,7 +116,7 @@ const teamMembers = [
 
   <Box
   sx={{
-    backgroundImage: 'url(images/header.png)', // Provide the correct path to the image
+    backgroundImage: 'url(/images/1.png)', // Provide the correct path to the image
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     color: '#FFFFFF',
@@ -137,7 +137,8 @@ const teamMembers = [
         variant="h2"
         gutterBottom
         sx={{
-          animation: 'fadeIn 2s ease-in-out', // Apply fade-in animation
+          animation: 'fadeIn 2s ease-in-out', 
+          animationDelay: '0.5s', // Apply fade-in animation
         }}
       >
         Galaxy Flashcards
