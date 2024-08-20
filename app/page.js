@@ -78,7 +78,7 @@ const teamMembers = [
   },
   {
     name: 'Syeda Eman',
-    position: 'AI Enthusiast',
+    position: 'AI Engineer',
     bio: 'An aspiring AI Engineer and tech enthusiast who is passionate about using AI to address real-world challenges and create meaningful solutions.',
     image: 'images/eman.jpg',
     facebook: 'https://www.facebook.com/profile.php?id=100095029180487',
@@ -110,7 +110,6 @@ const teamMembers = [
           </Typography>
           <Button color="inherit" href="/sign_in">Sign In</Button>
           <Button color="inherit" href="/sign_up">Sign Up</Button>
-          <Button color="inherit" href="/generate">FlashCards</Button>
           <UserButton />
         </Toolbar>
       </AppBar>
@@ -158,10 +157,8 @@ const teamMembers = [
         sx={{
           backgroundColor: '#104EB1',
           mt: 4,
-          animation: 'fadeIn 2s ease-in-out',
-          animationDelay: '1s', // Delayed animation for button
         }}
-        href="/sign_up"
+        href="/generate"
       >
         Get Started
       </Button>
