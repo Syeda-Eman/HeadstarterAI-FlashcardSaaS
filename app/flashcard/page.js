@@ -5,7 +5,7 @@ import { Container, Grid, Card, CardActionArea, CardContent, Typography, Box } f
 import { collection, doc, getDocs } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
 import { useSearchParams } from 'next/navigation'; // Adjust import if needed
-import { db } from '../firebase'; // Adjust import if needed
+import { db } from '/HeadstarterAI-FlashcardSaaS/firebase.js';// Adjust import if needed
 
 export default function Flashcard() {
   const { isLoaded, isSignedIn, user } = useUser();
